@@ -1,0 +1,37 @@
+"0","#pass df that contains metric of interest and membership variables
+quantile_summaries <- function(metric_and_contributors,level,org_name){
+ 
+  #adjustable
+  quantiles <- ntile(as.data.frame(metric_and_contributors[1]),level)
+  df <- as.data.frame(cbind(metric_and_contributors,quantiles)) %>% mutate(quantiles = as.factor(quantiles))
+  name <- names(df)
+  
+  quantile_dist <- df %>% ggplot() +
+                          geom_boxplot(aes_string(x=(name[3]),y = name[1])) + facet_wrap(~member)
+  
+  print(paste(""--summary statistics for quantiles in "", org_name, names(metric_and_contributors[1])))
+  print(quantile_dist)
+  
+}
+list = c()
+for(orga in unique(full$org)){
+  df <- full %>% filter(full$org == as.character(orga)) %>% select(totalIssueContributions,member)
+   quantile_summaries(df,10,orga)
+}
+"
+"1","[1]"
+"1"," ""--summary statistics for quantiles in  facebook totalIssueContributions"""
+"1","
+"
+"1","[1]"
+"1"," ""--summary statistics for quantiles in  tensorflow totalIssueContributions"""
+"1","
+"
+"1","[1]"
+"1"," ""--summary statistics for quantiles in  rstudio totalIssueContributions"""
+"1","
+"
+"1","[1]"
+"1"," ""--summary statistics for quantiles in  aws totalIssueContributions"""
+"1","
+"

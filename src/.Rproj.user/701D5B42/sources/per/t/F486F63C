@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1603562577303.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2070135425",
+    "id" : "F486F63C",
+    "lastKnownWriteTime" : 1603912998,
+    "last_content_update" : 1603912998240,
+    "path" : "C:/Users/Mikes_Surface2/PycharmProjects/GHub-Networks/src/temp.R",
+    "project_path" : "temp.R",
+    "properties" : {
+        "cursorPosition" : "40,50",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

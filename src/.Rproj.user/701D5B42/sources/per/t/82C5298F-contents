@@ -1,0 +1,201 @@
+---
+title: "Ghub_exploration"
+author: "Owen_Engbretson"
+date: "October 28, 2020"
+output: html_document
+---
+
+Overall Questions:
+- open source projects have the advantage of attracting talent outside of the normal network: how do these outside agents differ from members of the organization?
+- Is position in a network associated with different contribution behavior?
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(gridExtra)
+
+#Should save these in a file and iterate
+
+facebook <- read.csv("Facebook_final.csv")
+tensorflow <- read.csv("Tensorflow_final.csv")
+r_studio <- read.csv("rstudio_final.csv")
+aws <- read.csv("aws_final.csv")
+
+facebook$org <- "facebook"
+tensorflow$org<- "tensorflow"
+r_studio$org <- "rstudio"
+aws$org <- "aws"
+
+full <- rbind(facebook,tensorflow,r_studio,aws)
+
+####cleaning and conversion ####
+
+#redundant for a couple, but this can be called later
+col_nums <- c("totalRepositoriesWithContributedIssues",
+              "totalCommitContributions",
+              "totalIssueContributions",
+              "totalRepositoriesWithContributedCommits",
+              "totalPullRequestReviewContributions",
+              "centrality",
+              "contributions")
+
+full[col_nums] <- sapply(full[col_nums],as.numeric)
+
+#filter out gardener,
+#add conditions and other cleaning here
+#filter(centrality> median(centrality) & contributions > median(contributions)) %>% group_by(org) %>% 
+  #ungroup()
+  
+full <- full %>% filter(contributions < 3000 & centrality) 
+
+```
+
+Are members of organizations more central?
+
+```{r summarize}
+
+standard_summary <- function(df){
+  
+  cent_v_df <- df %>%  filter(centrality > 0) %>% ggplot(aes(x=log(centrality),y = totalPullRequestReviewContributions, color=member)) +  geom_point() + facet_wrap(~org)
+  
+  dist_cent <- df %>% filter(centrality > 0) %>% ggplot(aes(x=member,y = totalPullRequestReviewContributions) ) +
+                      geom_boxplot() + facet_wrap(~org)
+  
+  dist_cont <- df %>% filter(centrality > 0) %>%ggplot(aes(x=member,y = totalPullRequestReviewContributions)) + 
+                      geom_boxplot() + facet_wrap(~org)
+  
+  print(cent_v_df)
+  print(dist_cont)
+  print(dist_cent)
+}
+
+standard_summary(full)
+
+
+#(full %>% group_by(org) %>% summary())
+
+
+
+```
+obs: as we go into the top 50% of peeps in both cent and cont, trend becomes more linear
+
+
+Who collaborates with the most people: why do we need to beyond just repo membership?
+```{r justification}
+facebook_raw <- read.csv("facebook_raw.csv")
+tensorflow_raw <- read.csv("tensorflow_raw.csv")
+
+summary(facebook_raw %>% group_by(repo) %>% summarise(members = n()))
+summary(tensorflow_raw %>% group_by(repo) %>% summarise(members = n()))
+
+#note that the api only gives the first 500 users, so some repos are undercount
+
+```
+Large variation in repo membership: simply being a member of a lot of repos doesn't say much about network contributions
+
+
+
+
+
+What proportion of contributions are from top 10% in centrality
+What is the distribution of contributions in differnet quantiles?
+
+```{r}
+
+
+#pass df that contains metric of interest and membership variables
+quantile_summaries <- function(metric_and_contributors,level,org_name){
+ 
+  #adjustable
+  quantiles <- ntile(as.data.frame(metric_and_contributors[1]),level)
+  df <- as.data.frame(cbind(metric_and_contributors,quantiles)) %>% mutate(quantiles = as.factor(quantiles))
+  name <- names(df)
+  
+  quantile_dist <- df %>% ggplot() +
+                          geom_boxplot(aes_string(x=(name[3]),y = name[1])) + facet_wrap(~member) + ggtitle(org_name)
+  
+  print(paste("--summary statistics for quantiles in ", org_name, names(metric_and_contributors[1])))
+  print(quantile_dist)
+  
+}
+
+
+list = c()
+for(orga in unique(full$org)){
+  df <- full %>% filter(full$org == as.character(orga)) %>% select(totalIssueContributions,member)
+   quantile_summaries(df,10,orga)
+}
+
+
+
+
+
+
+
+
+```
+
+
+
+What if we filter out people with only the median contribution?
+
+
+
+Do members of orgs contribute more to repos?
+```{r}
+
+
+
+
+
+```
+
+What type of contributions do members and nonmembers make?
+```{r}
+
+measure_summary <- function(measure,org_name){
+  
+  trunc <- as.data.frame(full %>% select(member, measure) %>% filter(org ==org_name))
+  
+  print(str(trunc))
+  m <- trunc[measure]
+  print(type(m))
+  
+  trunc %>% group_by(member) %>% summarise(avg_cont = sum(trunc[measure])/n(),
+                                         med = median(trunc[measure]),
+                                         iqr = IQR(trunc[measure]))
+  
+}
+
+#measure_summary("totalRepositoriesWithContributedIssues","facebook")
+
+
+trunc <- full %>%  filter(org =="facebook")
+trunc %>% group_by(member) %>% summarise(avg_cont = sum(totalIssueContributions)/n(),
+                                         med = median(totalIssueContributions),
+                                         iqr = IQR(totalIssueContributions))
+
+
+
+```
+
+geographic differences
+```{r geo}
+
+#need some way to 
+
+w_location <- full %>% filter(is.na(location) == F & as.character(location) != "" & as.character(location) != "[]" )
+
+counts <- w_location %>% group_by(org,location,member) %>% summarise(n = n(), mdn.centrality = median(centrality))
+
+
+for(orga in unique(counts$org)){
+  print(orga)
+  print(head(counts %>% filter(orga == org) %>% arrange(desc(n))),n=15)
+}
+
+
+```
+
+

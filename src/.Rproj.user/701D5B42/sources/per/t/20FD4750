@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1603480183873.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2294337562",
+    "id" : "20FD4750",
+    "lastKnownWriteTime" : 1603640731,
+    "last_content_update" : 1603640731347,
+    "path" : "C:/Users/Mikes_Surface2/PycharmProjects/GHub-Networks/src/exploration.R",
+    "project_path" : "exploration.R",
+    "properties" : {
+        "cursorPosition" : "36,0",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

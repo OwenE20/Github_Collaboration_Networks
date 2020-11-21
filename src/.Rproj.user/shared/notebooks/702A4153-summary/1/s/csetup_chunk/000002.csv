@@ -1,0 +1,50 @@
+"0","knitr::opts_chunk$set(echo = TRUE)"
+"0","library(tidyverse)"
+"2","Loading tidyverse: ggplot2
+Loading tidyverse: tibble
+Loading tidyverse: tidyr
+Loading tidyverse: readr
+Loading tidyverse: purrr
+Loading tidyverse: dplyr
+"
+"2","Conflicts with tidy packages --------------------------------------------------------------------------------------------
+"
+"2","filter(): dplyr, stats
+lag():    dplyr, stats
+"
+"0","library(gridExtra)"
+"2","
+Attaching package: ‘gridExtra’
+
+"
+"2","The following object is masked from ‘package:dplyr’:
+
+    combine
+
+"
+"0","#Should save these in a file and iterate"
+"0","facebook <- read.csv(""Facebook_final.csv"")"
+"0","tensorflow <- read.csv(""Tensorflow_final.csv"")"
+"0","r_studio <- read.csv(""rstudio_final.csv"")"
+"0","aws <- read.csv(""aws_final.csv"")"
+"0","facebook$org <- ""facebook"""
+"0","tensorflow$org<- ""tensorflow"""
+"0","r_studio$org <- ""rstudio"""
+"0","aws$org <- ""aws"""
+"0","full <- rbind(facebook,tensorflow,r_studio,aws)"
+"0","####cleaning and conversion ####"
+"0","#redundant for a couple, but this can be called later"
+"0","col_nums <- c(""totalRepositoriesWithContributedIssues"","
+"0","              ""totalCommitContributions"","
+"0","              ""totalIssueContributions"","
+"0","              ""totalRepositoriesWithContributedCommits"","
+"0","              ""totalPullRequestReviewContributions"","
+"0","              ""centrality"","
+"0","              ""contributions"")"
+"0","full[col_nums] <- sapply(full[col_nums],as.numeric)"
+"0","#filter out gardener,"
+"0","#add conditions and other cleaning here"
+"0","#filter(centrality> median(centrality) & contributions > median(contributions)) %>% group_by(org) %>% "
+"0","  #ungroup()"
+"0","  "
+"0","full <- full %>% filter(contributions < 3000 & centrality) "

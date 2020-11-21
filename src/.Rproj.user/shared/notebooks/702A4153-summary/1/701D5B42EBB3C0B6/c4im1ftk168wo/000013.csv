@@ -1,0 +1,9 @@
+"0","for(orga in unique(counts$org)){
+  print(orga)
+  print(head(counts %>% filter(orga == org) %>% arrange(desc(n))),n=15)
+}
+"
+"1","[1]"
+"1"," ""aws"""
+"1","
+"
